@@ -317,6 +317,10 @@ extern const struct sh_pfc_soc_info r8a77995_pinmux_info;
 #define PINMUX_IPSR_MSEL(ipsr, fn, msel)				\
 	PINMUX_DATA(fn##_MARK, FN_##msel, FN_##fn, FN_##ipsr)
 
+#define PINMUX_IPSR_PHYS(ipsr, fn, msel) \
+	PINMUX_DATA(fn##_MARK, FN_##msel)
+
+
 /*
  * Describe a pinmux configuration for a single-function pin with GPIO
  * capability.

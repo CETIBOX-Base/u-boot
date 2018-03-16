@@ -254,6 +254,12 @@ config SYS_I2C_BUS_MAX
 	help
 	  Define the maximum number of available I2C buses.
 
+config DM_I2C_RCAR
+	bool "Renesas RCar Gen3 I2C driver"
+	depends on RCAR_GEN3 && DM_I2C
+	help
+	  Support for Renesas RCar Gen3 I2C controller.
+
 source "drivers/i2c/muxes/Kconfig"
 
 endmenu

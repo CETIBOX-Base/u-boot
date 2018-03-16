@@ -44,4 +44,6 @@ obj-$(CONFIG_SYS_I2C_UNIPHIER_F) += i2c-uniphier-f.o
 obj-$(CONFIG_SYS_I2C_ZYNQ) += zynq_i2c.o
 obj-$(CONFIG_TEGRA186_BPMP_I2C) += tegra186_bpmp_i2c.o
 
+obj-$(CONFIG_DM_I2C_RCAR) += rcar_i2c_dm.o
+
 obj-$(CONFIG_I2C_MUX) += muxes/
