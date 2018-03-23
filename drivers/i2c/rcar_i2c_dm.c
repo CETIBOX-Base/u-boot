@@ -70,9 +70,13 @@ struct rcar_i2c {
 
 #define LOOP_TIMEOUT	1024
 
+// #define RCAR_I2C_DEBUG
+
 static void rcar_i2c_write(struct rcar_i2c *priv, int reg, u32 val)
 {
+#ifdef RCAR_I2C_DEBUG
 	printf("rcar_i2c_write: %p <- %.8x\n", priv->base + reg, val);
+#endif
 	writel(val, priv->base + reg);
 }
 
@@ -84,7 +88,9 @@ static u32 _rcar_i2c_read(struct rcar_i2c *priv, int reg)
 static u32 rcar_i2c_read(struct rcar_i2c *priv, int reg)
 {
 	u32 regval = _rcar_i2c_read(priv, reg);
+#ifdef RCAR_I2C_DEBUG
 	printf("rcar_i2c_read: %p -> %.8x\n", priv->base + reg, regval);
+#endif
 	return regval;
 }
 
@@ -177,7 +183,9 @@ static int rcar_i2c_poll(struct rcar_i2c *priv, u32 flags)
 			return -EAGAIN;
 		udelay(1);
 	}
+#ifdef RCAR_I2C_DEBUG
 	printf("rcar_i2c_poll (%.2x): %.8x\n", flags&0xff, regval);
+#endif
 	if (i >= LOOP_TIMEOUT)
 		return -ETIMEDOUT;
 
@@ -321,6 +329,8 @@ static int rcar_i2c_xfer(struct udevice *dev, struct i2c_msg *msgs, int nmsgs)
 		return -EINVAL;
 
 	priv = dev_get_priv(dev);
+
+	rcar_i2c_reset(priv);
 
 	ret = rcar_i2c_bus_barrier(priv);
 	if (ret != 0)
