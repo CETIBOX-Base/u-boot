@@ -1,8 +1,7 @@
+// SPDX-License-Identifier: GPL-2.0+
 /*
  * Copyright (c) 2014 Google, Inc
  * Written by Simon Glass <sjg@chromium.org>
- *
- * SPDX-License-Identifier:	GPL-2.0+
  */
 
 #include <common.h>
@@ -815,7 +814,6 @@ static int decode_regions(struct pci_controller *hose, ofnode parent_node,
 			  ofnode node)
 {
 	int pci_addr_cells, addr_cells, size_cells;
-	phys_addr_t base = 0, size;
 	int cells_per_record;
 	const u32 *prop;
 	int len;
@@ -874,14 +872,34 @@ static int decode_regions(struct pci_controller *hose, ofnode parent_node,
 	}
 
 	/* Add a region for our local memory */
+#ifdef CONFIG_NR_DRAM_BANKS
+	bd_t *bd = gd->bd;
+
+	if (!bd)
+		return 0;
+
+	for (i = 0; i < CONFIG_NR_DRAM_BANKS; ++i) {
+		if (bd->bi_dram[i].size) {
+			pci_set_region(hose->regions + hose->region_count++,
+				       bd->bi_dram[i].start,
+				       bd->bi_dram[i].start,
+				       bd->bi_dram[i].size,
+				       PCI_REGION_MEM | PCI_REGION_SYS_MEMORY);
+		}
+	}
+#else
+	phys_addr_t base = 0, size;
+
 	size = gd->ram_size;
 #ifdef CONFIG_SYS_SDRAM_BASE
 	base = CONFIG_SYS_SDRAM_BASE;
 #endif
 	if (gd->pci_ram_top && gd->pci_ram_top < base + size)
 		size = gd->pci_ram_top - base;
-	pci_set_region(hose->regions + hose->region_count++, base, base,
-		       size, PCI_REGION_MEM | PCI_REGION_SYS_MEMORY);
+	if (size)
+		pci_set_region(hose->regions + hose->region_count++, base,
+			base, size, PCI_REGION_MEM | PCI_REGION_SYS_MEMORY);
+#endif
 
 	return 0;
 }

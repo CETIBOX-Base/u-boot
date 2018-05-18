@@ -1,8 +1,7 @@
+/* SPDX-License-Identifier: GPL-2.0+ */
 /*
  * Configuration for Amlogic Meson GXBB SoCs
  * (C) Copyright 2016 Beniamino Galvani <b.galvani@gmail.com>
- *
- * SPDX-License-Identifier:	GPL-2.0+
  */
 
 #ifndef __MESON_GXBB_COMMON_CONFIG_H
@@ -17,18 +16,12 @@
 #define CONFIG_SYS_CBSIZE		1024
 
 #define CONFIG_SYS_SDRAM_BASE		0
-#define CONFIG_SYS_TEXT_BASE		0x01000000
 #define CONFIG_SYS_INIT_SP_ADDR		0x20000000
 #define CONFIG_SYS_LOAD_ADDR		CONFIG_SYS_TEXT_BASE
 
 /* Generic Interrupt Controller Definitions */
 #define GICD_BASE			0xc4301000
 #define GICC_BASE			0xc4302000
-
-#define CONFIG_SYS_LONGHELP
-#define CONFIG_CMDLINE_EDITING
-
-#include <config_distro_defaults.h>
 
 #define BOOT_TARGET_DEVICES(func) \
 	func(MMC, mmc, 0) \

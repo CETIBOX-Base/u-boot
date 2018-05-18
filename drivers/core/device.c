@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-2.0+
 /*
  * Device manager
  *
@@ -5,18 +6,18 @@
  *
  * (C) Copyright 2012
  * Pavel Herrmann <morpheus.ibis@gmail.com>
- *
- * SPDX-License-Identifier:	GPL-2.0+
  */
 
 #include <common.h>
 #include <asm/io.h>
+#include <clk.h>
 #include <fdtdec.h>
 #include <fdt_support.h>
 #include <malloc.h>
 #include <dm/device.h>
 #include <dm/device-internal.h>
 #include <dm/lists.h>
+#include <dm/of_access.h>
 #include <dm/pinctrl.h>
 #include <dm/platdata.h>
 #include <dm/read.h>
@@ -390,6 +391,11 @@ int device_probe(struct udevice *dev)
 			goto fail;
 	}
 
+	/* Process 'assigned-{clocks/clock-parents/clock-rates}' properties */
+	ret = clk_set_defaults(dev);
+	if (ret)
+		goto fail;
+
 	if (drv->probe) {
 		ret = drv->probe(dev);
 		if (ret) {
@@ -703,8 +709,12 @@ int device_set_name(struct udevice *dev, const char *name)
 bool device_is_compatible(struct udevice *dev, const char *compat)
 {
 	const void *fdt = gd->fdt_blob;
+	ofnode node = dev_ofnode(dev);
 
-	return !fdt_node_check_compatible(fdt, dev_of_offset(dev), compat);
+	if (ofnode_is_np(node))
+		return of_device_is_compatible(ofnode_to_np(node), compat, NULL, NULL);
+	else
+		return !fdt_node_check_compatible(fdt, ofnode_to_offset(node), compat);
 }
 
 bool of_machine_is_compatible(const char *compat)

@@ -1,8 +1,7 @@
+// SPDX-License-Identifier: GPL-2.0+
 /*
  * (C) Copyright 2000
  * Wolfgang Denk, DENX Software Engineering, wd@denx.de.
- *
- * SPDX-License-Identifier:	GPL-2.0+
  */
 
 #include <common.h>
@@ -57,7 +56,7 @@ static int passwd_abort(uint64_t etime)
 	const char *algo_name = "sha256";
 	u_int presskey_len = 0;
 	int abort = 0;
-	int size;
+	int size = sizeof(sha);
 	int ret;
 
 	if (sha_env_str == NULL)

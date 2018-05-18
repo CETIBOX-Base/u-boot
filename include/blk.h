@@ -1,8 +1,7 @@
+/* SPDX-License-Identifier: GPL-2.0+ */
 /*
  * (C) Copyright 2000-2004
  * Wolfgang Denk, DENX Software Engineering, wd@denx.de.
- *
- * SPDX-License-Identifier:	GPL-2.0+
  */
 
 #ifndef BLK_H
@@ -32,8 +31,8 @@ enum if_type {
 	IF_TYPE_SD,
 	IF_TYPE_SATA,
 	IF_TYPE_HOST,
-	IF_TYPE_SYSTEMACE,
 	IF_TYPE_NVME,
+	IF_TYPE_EFI,
 
 	IF_TYPE_COUNT,			/* Number of interface types */
 };

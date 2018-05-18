@@ -1,9 +1,8 @@
+// SPDX-License-Identifier: GPL-2.0+
 /*
  * BTRFS filesystem implementation for U-Boot
  *
  * 2017 Marek Behun, CZ.NIC, marek.behun@nic.cz
- *
- * SPDX-License-Identifier:	GPL-2.0+
  */
 
 #include "btrfs.h"
@@ -147,8 +146,8 @@ static int btrfs_check_super(struct btrfs_super_block *sb)
 
 	if (sb->sys_chunk_array_size < sizeof(struct btrfs_key) +
 	    sizeof(struct btrfs_chunk)) {
-		printf("%s: system chunk array too small %u < %lu\n", __func__,
-		       sb->sys_chunk_array_size, (u32) sizeof(struct btrfs_key)
+		printf("%s: system chunk array too small %u < %zu\n", __func__,
+		       sb->sys_chunk_array_size, sizeof(struct btrfs_key)
 		       + sizeof(struct btrfs_chunk));
 		ret = -1;
 	}

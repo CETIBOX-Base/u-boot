@@ -1,7 +1,6 @@
+/* SPDX-License-Identifier: GPL-2.0 */
 /*
  * (C) Copyright 2012-2016 Stephen Warren
- *
- * SPDX-License-Identifier:	GPL-2.0
  */
 
 #ifndef __CONFIG_H
@@ -42,11 +41,6 @@
 /* Memory layout */
 #define CONFIG_NR_DRAM_BANKS		1
 #define CONFIG_SYS_SDRAM_BASE		0x00000000
-#ifdef CONFIG_ARM64
-#define CONFIG_SYS_TEXT_BASE		0x00080000
-#else
-#define CONFIG_SYS_TEXT_BASE		0x00008000
-#endif
 #define CONFIG_SYS_UBOOT_BASE		CONFIG_SYS_TEXT_BASE
 /*
  * The board really has 256M. However, the VC (VideoCore co-processor) shares
@@ -75,34 +69,22 @@
 #define CONFIG_MISC_INIT_R
 #endif
 
-/* Console UART */
-#if defined (CONFIG_BCM2837) || defined(CONFIG_TARGET_RPI_0_W)
-#define CONFIG_BCM283X_MU_SERIAL
-#else
-#define CONFIG_PL01X_SERIAL
-#endif
-
 /* Console configuration */
 #define CONFIG_SYS_CBSIZE		1024
 
 /* Environment */
 #define CONFIG_ENV_SIZE			SZ_16K
-#define CONFIG_ENV_VARS_UBOOT_CONFIG
 #define CONFIG_SYS_LOAD_ADDR		0x1000000
 #define CONFIG_PREBOOT			"usb start"
 
 /* Shell */
-#define CONFIG_CMDLINE_EDITING
 
 /* ATAGs support for bootm/bootz */
 #define CONFIG_SETUP_MEMORY_TAGS
 #define CONFIG_CMDLINE_TAG
 #define CONFIG_INITRD_TAG
 
-#include <config_distro_defaults.h>
-
 /* Environment */
-#define CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
 #define ENV_DEVICE_SETTINGS \
 	"stdin=serial,usbkbd\0" \
 	"stdout=serial,vidconsole\0" \

@@ -1,8 +1,7 @@
+// SPDX-License-Identifier: GPL-2.0+
 /*
  * (C) Copyright 2014 - 2015 Xilinx, Inc.
  * Michal Simek <michal.simek@xilinx.com>
- *
- * SPDX-License-Identifier:	GPL-2.0+
  */
 
 #include <common.h>
@@ -17,20 +16,24 @@
 DECLARE_GLOBAL_DATA_PTR;
 
 static struct mm_region zynqmp_mem_map[] = {
+#if !defined(CONFIG_ZYNQMP_NO_DDR)
 	{
 		.virt = 0x0UL,
 		.phys = 0x0UL,
 		.size = 0x80000000UL,
 		.attrs = PTE_BLOCK_MEMTYPE(MT_NORMAL) |
 			 PTE_BLOCK_INNER_SHARE
-	}, {
+	},
+#endif
+	{
 		.virt = 0x80000000UL,
 		.phys = 0x80000000UL,
 		.size = 0x70000000UL,
 		.attrs = PTE_BLOCK_MEMTYPE(MT_DEVICE_NGNRNE) |
 			 PTE_BLOCK_NON_SHARE |
 			 PTE_BLOCK_PXN | PTE_BLOCK_UXN
-	}, {
+	},
+	{
 		.virt = 0xf8000000UL,
 		.phys = 0xf8000000UL,
 		.size = 0x07e00000UL,
@@ -48,20 +51,24 @@ static struct mm_region zynqmp_mem_map[] = {
 #endif
 		.virt = 0x400000000UL,
 		.phys = 0x400000000UL,
-		.size = 0x200000000UL,
+		.size = 0x400000000UL,
 		.attrs = PTE_BLOCK_MEMTYPE(MT_DEVICE_NGNRNE) |
 			 PTE_BLOCK_NON_SHARE |
 			 PTE_BLOCK_PXN | PTE_BLOCK_UXN
-	}, {
-		.virt = 0x600000000UL,
-		.phys = 0x600000000UL,
+	},
+#if !defined(CONFIG_ZYNQMP_NO_DDR)
+	{
+		.virt = 0x800000000UL,
+		.phys = 0x800000000UL,
 		.size = 0x800000000UL,
 		.attrs = PTE_BLOCK_MEMTYPE(MT_NORMAL) |
 			 PTE_BLOCK_INNER_SHARE
-	}, {
-		.virt = 0xe00000000UL,
-		.phys = 0xe00000000UL,
-		.size = 0xf200000000UL,
+	},
+#endif
+	{
+		.virt = 0x1000000000UL,
+		.phys = 0x1000000000UL,
+		.size = 0xf000000000UL,
 		.attrs = PTE_BLOCK_MEMTYPE(MT_DEVICE_NGNRNE) |
 			 PTE_BLOCK_NON_SHARE |
 			 PTE_BLOCK_PXN | PTE_BLOCK_UXN
@@ -177,7 +184,7 @@ void zynqmp_pmufw_version(void)
 	       pm_api_version >> ZYNQMP_PM_VERSION_MAJOR_SHIFT,
 	       pm_api_version & ZYNQMP_PM_VERSION_MINOR_MASK);
 
-	if (pm_api_version != ZYNQMP_PM_VERSION)
+	if (pm_api_version < ZYNQMP_PM_VERSION)
 		panic("PMUFW version error. Expected: v%d.%d\n",
 		      ZYNQMP_PM_VERSION_MAJOR, ZYNQMP_PM_VERSION_MINOR);
 }

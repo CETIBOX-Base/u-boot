@@ -1,10 +1,9 @@
+/* SPDX-License-Identifier: GPL-2.0+ */
 /*
  * Copyright (C) 2010-2011 Freescale Semiconductor, Inc.
  *
  * Configuration settings for the Boundary Devices Nitrogen6X
  * and Freescale i.MX6Q Sabre Lite boards.
- *
- * SPDX-License-Identifier:	GPL-2.0+
  */
 
 #ifndef __CONFIG_H
@@ -25,7 +24,6 @@
 #define CONFIG_MXC_UART_BASE	       UART2_BASE
 
 #ifdef CONFIG_CMD_SF
-#define CONFIG_MXC_SPI
 #define CONFIG_SF_DEFAULT_BUS  0
 #define CONFIG_SF_DEFAULT_CS   0
 #define CONFIG_SF_DEFAULT_SPEED 25000000
@@ -269,8 +267,6 @@
 #define CONFIG_ENV_SPI_MAX_HZ		CONFIG_SF_DEFAULT_SPEED
 #endif
 
-#define CONFIG_SYS_ALT_MEMTEST
-
 /*
  * PCI express
  */
@@ -278,7 +274,5 @@
 #define CONFIG_PCI_SCAN_SHOW
 #define CONFIG_PCIE_IMX
 #endif
-
-#define CONFIG_USB_FUNCTION_MASS_STORAGE
 
 #endif	       /* __CONFIG_H */

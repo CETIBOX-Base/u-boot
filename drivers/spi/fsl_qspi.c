@@ -1,9 +1,8 @@
+// SPDX-License-Identifier: GPL-2.0+
 /*
  * Copyright 2013-2015 Freescale Semiconductor, Inc.
  *
  * Freescale Quad Serial Peripheral Interface (QSPI) driver
- *
- * SPDX-License-Identifier:	GPL-2.0+
  */
 
 #include <common.h>
@@ -20,7 +19,8 @@
 DECLARE_GLOBAL_DATA_PTR;
 
 #define RX_BUFFER_SIZE		0x80
-#ifdef CONFIG_MX6SX
+#if defined(CONFIG_MX6SX) || defined(CONFIG_MX6UL) || \
+	defined(CONFIG_MX6ULL) || defined(CONFIG_MX7D)
 #define TX_BUFFER_SIZE		0x200
 #else
 #define TX_BUFFER_SIZE		0x40
@@ -268,7 +268,8 @@ static void qspi_set_lut(struct fsl_qspi_priv *priv)
 			     INSTR0(LUT_CMD) | OPRND1(ADDR32BIT) |
 			     PAD1(LUT_PAD1) | INSTR1(LUT_ADDR));
 #endif
-#ifdef CONFIG_MX6SX
+#if defined(CONFIG_MX6SX) || defined(CONFIG_MX6UL) || \
+	defined(CONFIG_MX6ULL) || defined(CONFIG_MX7D)
 	/*
 	 * To MX6SX, OPRND0(TX_BUFFER_SIZE) can not work correctly.
 	 * So, Use IDATSZ in IPCR to determine the size and here set 0.
@@ -905,6 +906,11 @@ struct spi_slave *spi_setup_slave(unsigned int bus, unsigned int cs,
 	qspi->slave.max_write_size = TX_BUFFER_SIZE;
 
 	mcr_val = qspi_read32(qspi->priv.flags, &regs->mcr);
+
+	/* Set endianness to LE for i.mx */
+	if (IS_ENABLED(CONFIG_MX6) || IS_ENABLED(CONFIG_MX7))
+		mcr_val = QSPI_MCR_END_CFD_LE;
+
 	qspi_write32(qspi->priv.flags, &regs->mcr,
 		     QSPI_MCR_RESERVED_MASK | QSPI_MCR_MDIS_MASK |
 		     (mcr_val & QSPI_MCR_END_CFD_MASK));
@@ -1011,11 +1017,11 @@ static int fsl_qspi_probe(struct udevice *bus)
 	priv->num_chipselect = plat->num_chipselect;
 
 	/* make sure controller is not busy anywhere */
-	ret = wait_for_bit(__func__, &priv->regs->sr,
-			   QSPI_SR_BUSY_MASK |
-			   QSPI_SR_AHB_ACC_MASK |
-			   QSPI_SR_IP_ACC_MASK,
-			   false, 100, false);
+	ret = wait_for_bit_le32(&priv->regs->sr,
+				QSPI_SR_BUSY_MASK |
+				QSPI_SR_AHB_ACC_MASK |
+				QSPI_SR_IP_ACC_MASK,
+				false, 100, false);
 
 	if (ret) {
 		debug("ERROR : The controller is busy\n");
@@ -1023,6 +1029,11 @@ static int fsl_qspi_probe(struct udevice *bus)
 	}
 
 	mcr_val = qspi_read32(priv->flags, &priv->regs->mcr);
+
+	/* Set endianness to LE for i.mx */
+	if (IS_ENABLED(CONFIG_MX6) || IS_ENABLED(CONFIG_MX7))
+		mcr_val = QSPI_MCR_END_CFD_LE;
+
 	qspi_write32(priv->flags, &priv->regs->mcr,
 		     QSPI_MCR_RESERVED_MASK | QSPI_MCR_MDIS_MASK |
 		     (mcr_val & QSPI_MCR_END_CFD_MASK));
@@ -1173,11 +1184,11 @@ static int fsl_qspi_claim_bus(struct udevice *dev)
 	priv = dev_get_priv(bus);
 
 	/* make sure controller is not busy anywhere */
-	ret = wait_for_bit(__func__, &priv->regs->sr,
-			   QSPI_SR_BUSY_MASK |
-			   QSPI_SR_AHB_ACC_MASK |
-			   QSPI_SR_IP_ACC_MASK,
-			   false, 100, false);
+	ret = wait_for_bit_le32(&priv->regs->sr,
+				QSPI_SR_BUSY_MASK |
+				QSPI_SR_AHB_ACC_MASK |
+				QSPI_SR_IP_ACC_MASK,
+				false, 100, false);
 
 	if (ret) {
 		debug("ERROR : The controller is busy\n");
@@ -1227,6 +1238,8 @@ static const struct dm_spi_ops fsl_qspi_ops = {
 static const struct udevice_id fsl_qspi_ids[] = {
 	{ .compatible = "fsl,vf610-qspi" },
 	{ .compatible = "fsl,imx6sx-qspi" },
+	{ .compatible = "fsl,imx6ul-qspi" },
+	{ .compatible = "fsl,imx7d-qspi" },
 	{ }
 };
 

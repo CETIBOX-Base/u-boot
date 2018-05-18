@@ -1,11 +1,10 @@
+/* SPDX-License-Identifier: GPL-2.0+ */
 /*
  * (C) Copyright 2013
  * Texas Instruments Incorporated, <www.ti.com>
  *
  * Sricharan R	<r.sricharan@ti.com>
  * Nishant Kamat <nskamat@ti.com>
- *
- * SPDX-License-Identifier:	GPL-2.0+
  */
 #ifndef _MUX_DATA_DRA7XX_H_
 #define _MUX_DATA_DRA7XX_H_
@@ -372,13 +371,10 @@ const struct pad_conf_entry dra71x_core_padconf_array[] = {
 };
 
 const struct pad_conf_entry early_padconf[] = {
-#if (CONFIG_CONS_INDEX == 1)
 	{UART1_RXD, (PIN_INPUT_SLEW | M0)}, /* UART1_RXD */
 	{UART1_TXD, (PIN_INPUT_SLEW | M0)}, /* UART1_TXD */
-#elif (CONFIG_CONS_INDEX == 3)
 	{UART3_RXD, (PIN_INPUT_SLEW | M0)}, /* UART3_RXD */
 	{UART3_TXD, (PIN_INPUT_SLEW | M0)}, /* UART3_TXD */
-#endif
 	{I2C1_SDA, (PIN_INPUT | M0)},	/* I2C1_SDA */
 	{I2C1_SCL, (PIN_INPUT | M0)},	/* I2C1_SCL */
 };
@@ -882,7 +878,7 @@ const struct pad_conf_entry dra76x_core_padconf_array[] = {
 	{I2C2_SCL, (M1 | PIN_INPUT_PULLUP)},	/* i2c2_scl.hdmi1_ddc_sda */
 	{WAKEUP0, (M14 | PIN_OUTPUT)},	/* N/A.gpio1_0 */
 	{WAKEUP1, (M14 | PIN_OUTPUT)},	/* N/A.gpio1_1 */
-	{WAKEUP2, (M1 | PIN_OUTPUT)},	/* N/A.sys_nirq2 */
+	{WAKEUP2, (M14 | PIN_INPUT)},	/* N/A.gpio1_2 */
 	{WAKEUP3, (M1 | PIN_OUTPUT)},	/* N/A.sys_nirq1 */
 };
 

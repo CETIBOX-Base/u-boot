@@ -1,12 +1,9 @@
+// SPDX-License-Identifier: GPL-2.0
 /*
  * Device Tree Source for the r8a77970 SoC
  *
  * Copyright (C) 2016-2017 Renesas Electronics Corp.
  * Copyright (C) 2017 Cogent Embedded, Inc.
- *
- * This file is licensed under the terms of the GNU General Public License
- * version 2.  This program is licensed "as is" without any warranty of any
- * kind, whether express or implied.
  */
 
 #include <dt-bindings/interrupt-controller/irq.h>
@@ -50,7 +47,6 @@
 		#clock-cells = <0>;
 		/* This value must be overridden by the board */
 		clock-frequency = <0>;
-		u-boot,dm-pre-reloc;
 	};
 
 	extalr_clk: extalr {
@@ -58,7 +54,6 @@
 		#clock-cells = <0>;
 		/* This value must be overridden by the board */
 		clock-frequency = <0>;
-		u-boot,dm-pre-reloc;
 	};
 
 	/* External SCIF clock - to be overridden by boards that provide it */
@@ -75,7 +70,6 @@
 		#address-cells = <2>;
 		#size-cells = <2>;
 		ranges;
-		u-boot,dm-pre-reloc;
 
 		gic: interrupt-controller@f1010000 {
 			compatible = "arm,gic-400";
@@ -114,7 +108,6 @@
 			#clock-cells = <2>;
 			#power-domain-cells = <0>;
 			#reset-cells = <1>;
-			u-boot,dm-pre-reloc;
 		};
 
 		rst: reset-controller@e6160000 {
@@ -152,7 +145,6 @@
 		prr: chipid@fff00044 {
 			compatible = "renesas,prr";
 			reg = <0 0xfff00044 0 4>;
-			u-boot,dm-pre-reloc;
 		};
 
 		dmac1: dma-controller@e7300000 {
@@ -387,6 +379,14 @@
 			phy-mode = "rgmii-id";
 			#address-cells = <1>;
 			#size-cells = <0>;
+		};
+
+		rpc: rpc@0xee200000 {
+			compatible = "renesas,rpc-r8a77970", "renesas,rpc";
+			reg = <0 0xee200000 0 0x100>, <0 0x08000000 0 0>;
+			clocks = <&cpg CPG_MOD 917>;
+			bank-width = <2>;
+			status = "disabled";
 		};
 	};
 };

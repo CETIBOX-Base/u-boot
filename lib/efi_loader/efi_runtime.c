@@ -74,12 +74,24 @@ static void EFIAPI efi_reset_system_boottime(
 			efi_status_t reset_status,
 			unsigned long data_size, void *reset_data)
 {
+	struct efi_event *evt;
+
 	EFI_ENTRY("%d %lx %lx %p", reset_type, reset_status, data_size,
 		  reset_data);
 
+	/* Notify reset */
+	list_for_each_entry(evt, &efi_events, link) {
+		if (evt->group &&
+		    !guidcmp(evt->group,
+			     &efi_guid_event_group_reset_system)) {
+			efi_signal_event(evt, false);
+			break;
+		}
+	}
 	switch (reset_type) {
 	case EFI_RESET_COLD:
 	case EFI_RESET_WARM:
+	case EFI_RESET_PLATFORM_SPECIFIC:
 		do_reset(NULL, 0, 0, NULL);
 		break;
 	case EFI_RESET_SHUTDOWN:
@@ -134,8 +146,9 @@ void __weak __efi_runtime EFIAPI efi_reset_system(
 	while (1) { }
 }
 
-void __weak efi_reset_system_init(void)
+efi_status_t __weak efi_reset_system_init(void)
 {
+	return EFI_SUCCESS;
 }
 
 efi_status_t __weak __efi_runtime EFIAPI efi_get_time(
@@ -146,8 +159,9 @@ efi_status_t __weak __efi_runtime EFIAPI efi_get_time(
 	return EFI_DEVICE_ERROR;
 }
 
-void __weak efi_get_time_init(void)
+efi_status_t __weak efi_get_time_init(void)
 {
+	return EFI_SUCCESS;
 }
 
 struct efi_runtime_detach_list_struct {
@@ -332,18 +346,26 @@ static efi_status_t EFIAPI efi_set_virtual_address_map(
 	return EFI_EXIT(EFI_INVALID_PARAMETER);
 }
 
-void efi_add_runtime_mmio(void *mmio_ptr, u64 len)
+efi_status_t efi_add_runtime_mmio(void *mmio_ptr, u64 len)
 {
 	struct efi_runtime_mmio_list *newmmio;
-
 	u64 pages = (len + EFI_PAGE_MASK) >> EFI_PAGE_SHIFT;
-	efi_add_memory_map(*(uintptr_t *)mmio_ptr, pages, EFI_MMAP_IO, false);
+	uint64_t addr = *(uintptr_t *)mmio_ptr;
+	uint64_t retaddr;
+
+	retaddr = efi_add_memory_map(addr, pages, EFI_MMAP_IO, false);
+	if (retaddr != addr)
+		return EFI_OUT_OF_RESOURCES;
 
 	newmmio = calloc(1, sizeof(*newmmio));
+	if (!newmmio)
+		return EFI_OUT_OF_RESOURCES;
 	newmmio->ptr = mmio_ptr;
 	newmmio->paddr = *(uintptr_t *)mmio_ptr;
 	newmmio->len = len;
 	list_add_tail(&newmmio->link, &efi_runtime_mmio);
+
+	return EFI_SUCCESS;
 }
 
 /*
@@ -381,6 +403,32 @@ static efi_status_t __efi_runtime EFIAPI efi_invalid_parameter(void)
 	return EFI_INVALID_PARAMETER;
 }
 
+efi_status_t __efi_runtime EFIAPI efi_update_capsule(
+			struct efi_capsule_header **capsule_header_array,
+			efi_uintn_t capsule_count,
+			u64 scatter_gather_list)
+{
+	return EFI_UNSUPPORTED;
+}
+
+efi_status_t __efi_runtime EFIAPI efi_query_capsule_caps(
+			struct efi_capsule_header **capsule_header_array,
+			efi_uintn_t capsule_count,
+			u64 maximum_capsule_size,
+			u32 reset_type)
+{
+	return EFI_UNSUPPORTED;
+}
+
+efi_status_t __efi_runtime EFIAPI efi_query_variable_info(
+			u32 attributes,
+			u64 maximum_variable_storage_size,
+			u64 remaining_variable_storage_size,
+			u64 maximum_variable_size)
+{
+	return EFI_UNSUPPORTED;
+}
+
 struct efi_runtime_services __efi_runtime_data efi_runtime_services = {
 	.hdr = {
 		.signature = EFI_RUNTIME_SERVICES_SIGNATURE,
@@ -398,4 +446,7 @@ struct efi_runtime_services __efi_runtime_data efi_runtime_services = {
 	.set_variable = efi_set_variable,
 	.get_next_high_mono_count = (void *)&efi_device_error,
 	.reset_system = &efi_reset_system_boottime,
+	.update_capsule = efi_update_capsule,
+	.query_capsule_caps = efi_query_capsule_caps,
+	.query_variable_info = efi_query_variable_info,
 };

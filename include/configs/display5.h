@@ -1,8 +1,7 @@
+/* SPDX-License-Identifier: GPL-2.0+ */
 /*
  * Copyright (C) 2017
  * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
- *
- * SPDX-License-Identifier:	GPL-2.0+
  */
 
 #ifndef __CONFIG_H
@@ -49,7 +48,6 @@
 
 #include "imx6_spl.h"
 #define CONFIG_SYS_SPI_U_BOOT_OFFS	0x20000
-#define CONFIG_SPL_SPI_LOAD
 
 #define CONFIG_CMDLINE_TAG
 #define CONFIG_SETUP_MEMORY_TAGS
@@ -65,7 +63,6 @@
 
 /* SPI NOR Flash */
 #ifdef CONFIG_CMD_SF
-#define CONFIG_MXC_SPI
 #define CONFIG_SF_DEFAULT_BUS		1
 #define CONFIG_SF_DEFAULT_CS		(0 | (IMX_GPIO_NR(5, 29) << 8))
 #define CONFIG_SF_DEFAULT_SPEED		50000000
@@ -93,7 +90,6 @@
 #endif
 
 /* MMC Configs */
-#define CONFIG_FSL_ESDHC
 #define CONFIG_FSL_USDHC
 #define CONFIG_SYS_FSL_ESDHC_ADDR	0
 #define CONFIG_SYS_FSL_USDHC_NUM	2
