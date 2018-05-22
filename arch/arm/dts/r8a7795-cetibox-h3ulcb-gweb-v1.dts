@@ -13,6 +13,7 @@
 
 /dts-v1/;
 #include "r8a7795.dtsi"
+#include "r8a7795-u-boot.dtsi"
 #include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/input/input.h>
 
@@ -432,3 +433,8 @@
 	timeout-sec = <60>;
 	status = "okay";
 };
+
+&xhci0 {
+	status = "okay";
+};
+
