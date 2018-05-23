@@ -11,7 +11,7 @@ CONFIG_FIT=y
 CONFIG_USE_BOOTARGS=y
 CONFIG_BOOTARGS="rw root=/dev/sda1 rootwait"
 CONFIG_USE_BOOTCOMMAND=y
-CONFIG_BOOTCOMMAND="usb reset; ext4load usb 0:1 0x48080000 /boot/Image; ext4load usb 0:1 0x48000000 /boot/r8a7795-cetibox-h3ulcb-gweb-v1.dtb; booti 0x48080000 - 0x48000000"
+CONFIG_BOOTCOMMAND="i2c dev 5; i2c mw 3c 0 0; i2c mw 3c 0 2; mw.b 50001000 56; mw.b 50001001 00; i2c write 50001000 2d aa 2 -s; usb start; ext4load usb 0:1 0x48070000 /boot/firmware.img; ext4load usb 0:1 0x48080000 /boot/Image; ext4load usb 0:1 0x48000000 /boot/r8a7795-cetibox-h3ulcb-gweb-v2.dtb; booti 0x48080000 0x48070000 0x48000000"
 CONFIG_DEFAULT_FDT_FILE="r8a7795-cetibox-h3ulcb-gweb-v1.dtb"
 CONFIG_VERSION_VARIABLE=y
 CONFIG_HUSH_PARSER=y
