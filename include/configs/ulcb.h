@@ -21,6 +21,7 @@
 
 /* Generic Timer Definitions (use in assembler source) */
 #define COUNTER_FREQUENCY	0xFE502A	/* 16.66MHz from CPclk */
+#define CONFIG_SH_SDHI_FREQ 200000000
 
 /* Environment in eMMC, at the end of 1st "boot sector" */
 #define CONFIG_ENV_OFFSET		(-CONFIG_ENV_SIZE)
