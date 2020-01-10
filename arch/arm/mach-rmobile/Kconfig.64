@@ -41,6 +41,11 @@ config TARGET_ULCB
 	help
           Support for Renesas R-Car Gen3 ULCB platform
 
+config TARGET_H3VC2
+	bool "H3VC2 board"
+	help
+	  Suppor for Renesas R-Car Gen3 VC2 platform
+
 endchoice
 
 config SYS_SOC
@@ -50,5 +55,6 @@ source "board/renesas/draak/Kconfig"
 source "board/renesas/eagle/Kconfig"
 source "board/renesas/salvator-x/Kconfig"
 source "board/renesas/ulcb/Kconfig"
+source "board/renesas/h3vc2/Kconfig"
 
 endif

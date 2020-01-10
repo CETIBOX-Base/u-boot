@@ -60,7 +60,8 @@
 
 #define CONFIG_EXTRA_ENV_SETTINGS	\
 	"fdt_high=0xffffffffffffffff\0"	\
-	"initrd_high=0xffffffffffffffff\0"
+	"initrd_high=0xffffffffffffffff\0" \
+	"fdtfile="CONFIG_DEFAULT_FDT_FILE"\0"
 
 #if !defined(CONFIG_BOOTCOMMAND)
 #define CONFIG_BOOTCOMMAND	\

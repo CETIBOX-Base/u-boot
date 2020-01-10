@@ -1,0 +1,15 @@
+if TARGET_H3VC2
+
+config SYS_SOC
+	default "rmobile"
+
+config SYS_BOARD
+	default "h3vc2"
+
+config SYS_VENDOR
+	default "renesas"
+
+config SYS_CONFIG_NAME
+	default "h3vc2" if R8A7795
+
+endif

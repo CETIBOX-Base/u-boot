@@ -486,6 +486,19 @@ static int usb_scan_port(struct usb_device_scan *usb_scan)
 		return 0;
 	}
 
+	/* Disconnection happened, wait for reconnect
+	 *
+	 * For some device/hub combinations a "spurious" disconnect event was
+	 * observed when the hub turned the port on. Do not remove the port from the
+	 * scan list in this case, instead wait for the device to reappear.
+	 */
+	if ((portchange & USB_PORT_STAT_C_CONNECTION) &&
+		!(portstatus & USB_PORT_STAT_CONNECTION)) {
+		debug("devnum=%d port=%d disconnect\n", dev->devnum, i+1);
+		usb_clear_port_feature(dev, i + 1, USB_PORT_FEAT_C_CONNECTION);
+		return 0;
+	}
+
 	if (portchange & USB_PORT_STAT_C_RESET) {
 		debug("port %d reset change\n", i + 1);
 		usb_clear_port_feature(dev, i + 1, USB_PORT_FEAT_C_RESET);
